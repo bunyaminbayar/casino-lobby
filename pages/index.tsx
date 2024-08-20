@@ -1,16 +1,28 @@
 import { GetServerSideProps } from 'next';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setGames } from '../redux/gameSlice';
+import { RootState } from '../redux/store';
+import { CategoryFilter } from '../components/CategoryFilter';
 import { Game } from '@/types/games';
-import { useState } from 'react';
 
 interface HomeProps {
-  games: Game[];
+  initialGames: Game[];
 }
 
-export default function Home({ games }: HomeProps) {
+export default function Home({ initialGames }: HomeProps) {
+  const dispatch = useDispatch();
+  const games = useSelector((state: RootState) => state.game.games);
+  const selectedCategory = useSelector((state: RootState) => state.game.selectedCategory);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  useEffect(() => {
+    dispatch(setGames(initialGames));
+  }, [dispatch, initialGames]);
+
   const filteredGames = games.filter(game =>
-    game.name.toLowerCase().includes(searchTerm.toLowerCase())
+    game.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (selectedCategory ? game.cats.some(cat => cat.title === selectedCategory) : true)
   );
 
   return (
@@ -23,6 +35,7 @@ export default function Home({ games }: HomeProps) {
         value={searchTerm}
         onChange={e => setSearchTerm(e.target.value)}
       />
+      <CategoryFilter />
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredGames.map(game => (
           <div key={game.id} className="border p-4 rounded shadow">
@@ -39,13 +52,9 @@ export default function Home({ games }: HomeProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const res = await fetch('http://localhost:3000/api/games');  // Veya uygun bir API URL'si
-  const games: Game[] = await res.json();
+export const getServerSideProps: GetServerSideProps = async () => {
+  const res = await fetch('http://localhost:3000/api/games');
+  const initialGames: Game[] = await res.json();
 
-  return {
-    props: {
-      games,
-    },
-  };
-}
+  return { props: { initialGames } };
+};
