@@ -35,3 +35,7 @@ body {
 .pages {
   height: calc(100vh - 120px);
 }
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}

@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { setSelectedCategory } from '../../redux/gameSlice';
 
-export const CategoryFilter = () => {
+export const GameCategoryFilter = () => {
   const dispatch = useDispatch();
   const games = useSelector((state: RootState) => state.game.games);
   const selectedCategory = useSelector((state: RootState) => state.game.selectedCategory);
 
-  const categoryCounts = games.reduce((acc, game) => {
-    game.cats.forEach(cat => {
-      acc[cat.title] = (acc[cat.title] || 0) + 1;
-    });
-    return acc;
-  }, {} as Record<string, number>);
+  const categoryCounts = useMemo(() => {
+    return games.reduce((acc, game) => {
+      game.cats.forEach(cat => {
+        acc[cat.title] = (acc[cat.title] || 0) + 1;
+      });
+      return acc;
+    }, {} as Record<string, number>);
+  }, [games]);
 
   const categories = Array.from(new Set(games.flatMap(game => game.cats.map(cat => cat.title))));
 

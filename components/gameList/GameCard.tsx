@@ -11,7 +11,7 @@ export const GameCard: React.FC<GameCardProps> = ({ game }) => {
       <img 
         src={game.icon_2} 
         alt={game.name} 
-        className="w-full h-32 object-cover rounded-t-sm" 
+        className="w-full object-cover rounded-t-sm" 
       />
       <h2 className="text-sm sm:text-lg font-semibold text-center p-4">{game.name}</h2>
     </div>
