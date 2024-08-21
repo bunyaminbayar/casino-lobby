@@ -20,7 +20,7 @@ export default function Navbar() {
                     </div>
                 </div>
             </nav>
-            <div className='h-16'></div>
+            <div className='h-48 md:h-16'></div>
         </>
     )
 }
